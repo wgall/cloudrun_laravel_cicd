@@ -29,8 +29,15 @@ jobs:
         with:
           project_id: ${{ secrets.projectid }}
           export_default_credentials: true 
+      - name: Check if registry exists
+        id: repository_status
+        run: gcloud container images list | grep ${{ env.reponame }} | echo ::set-output name=exists::true || echo ::set-output name=exists::false
+      - name: Create Backend folder
+        if: steps.repository_status.outputs.exists == 'false'
+        working-directory: ./bucket
+        run: terraform init && terraform apply -y -var "project=${{ env.reponame }}-stage/"
       - name: Initialize terraform 
-        run: terraform init -var "bucket=${{env.reponame}}"
+        run: terraform init -var "project="${{ env.reponame }}-dev"
       - name: Apply terraform 
         run: terraform apply -y -var "name=${{env.reponame}}" -var "version=${GITHUB_REF#refs/*/}" -var "bucket=${{env.reponame}}"
       - name: Setup docker 
@@ -62,7 +69,13 @@ jobs:
           project_id: ${{ secrets.projectid }}
           export_default_credentials: true 
       - name: Check if registry exists
-        run: gcloud container images list | grep nodenext
+        id: repository_status
+        run: gcloud container images list | grep ${{ env.reponame }} | echo ::set-output name=exists::true || echo ::set-output name=exists::false
+      - name: Create Backend folder
+        if: steps.repository_status.outputs.exists == 'false'
+        working-directory: ./bucket
+        run: terraform init && terraform apply -y -var "folder=${{ env.reponame }}-stage/"
+
       - name: Initialize terraform 
         run: terraform init -var "bucket=${{env.reponame}}"
       - name: Apply terraform 
