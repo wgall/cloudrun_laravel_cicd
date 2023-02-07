@@ -46,8 +46,10 @@ jobs:
         working-directory: ./bucket
         run: terraform init && terraform apply -y -var "project=${{ env.reponame }}-stage/"
       - name: Initialize terraform 
-        run: terraform init -var "project="${{ env.reponame }}-dev"
+        working-directory: ./dev
+        run: terraform init -var "project="${{ env.reponame }}-dev" -force-copy
       - name: Apply terraform 
+        working-directory: ./dev
         run: terraform apply -y -var "name=${{env.reponame}}" -var "version=${GITHUB_REF#refs/*/}" -var "bucket=${{env.reponame}}"
       
   deploy_on_stage: 
