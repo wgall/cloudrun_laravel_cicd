@@ -50,7 +50,7 @@ jobs:
           terraform_wrapper: false
       - name: Check if registry exists
         id: repository_status
-        run: gcloud run services list | grep ${{ env.project }}-dev | echo ::set-output name=exists::true || echo ::set-output name=exists::false
+        run: gcloud run services list | grep ${{ env.reponame }}-dev | echo ::set-output name=exists::true || echo ::set-output name=exists::false
       - name: Create Backend folder
         if: steps.repository_status.outputs.exists == 'false'
         working-directory: ./bucket
