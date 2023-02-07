@@ -15,7 +15,7 @@ jobs:
       - name: Test
         run: ${{ env.tag }}
   deploy_on_dev:
-    if: contains(github.ref, "dev")
+    if: contains(github.ref, 'dev')
     runs-on: ubuntu-latest
     steps:
       - name: Make repo name variable compliant with K8 namespace rules
