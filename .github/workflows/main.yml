@@ -28,48 +28,56 @@ jobs:
           export_default_credentials: true 
       - name: Setup docker 
         run: gcloud auth configure-docker --quiet
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Generate key
+        run: php artisan key:generate
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
       - name: Build and push image
         working-directory: ./
         run: |
           docker build . -t gcr.io/labs-370214/${{ env.reponame }}:${{env.tag}}
           docker push gcr.io/labs-370214/${{ env.reponame }}:${{env.tag}}
-      - name: Checkout Pipeline repository
-        uses: actions/checkout@v3
-        with:
-          repository: wgall/cloudrun_laravel_cicd
-          token: ${{ secrets.CLOUDRUN_GIT_TOKEN }}
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.3.5
-          terraform_wrapper: false
-      - name: Authenitcate pipeline repository 
-        uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: ${{ secrets.SA_CREDENTIALS }}
-      - name: Setup pipline repository
-        uses: google-github-actions/setup-gcloud@main 
-        with:
-          project_id: labs-370214
-          export_default_credentials: true 
-      - name: Check if registry exists
-        id: repository_status
-        run: echo "exists=$(gcloud run services list | grep ${{ env.reponame }}-dev | wc -l)" >> $GITHUB_ENV
-      - name: Create Backend folder
-        if:  ${{ env.exists == '0' }}
-        working-directory: ./bucket
-        run: terraform init && terraform apply --auto-approve -var "project=${{ env.reponame }}-dev/"
-      - name: Initialize terraform 
-        working-directory: ./dev
-        run: |
-          sed -i "s/folder/${{ env.reponame}}-dev/" main.tf
-          terraform init -force-copy
-      - name: Apply terraform 
-        working-directory: ./dev
-        run: | 
-         host=$(terraform apply --auto-approve -var "image=${{env.reponame}}" -var "tag=${{env.tag}}" -var "project=${{env.reponame}}-dev" | grep "backend-id =" | cut -d " " -f 3) 
-         gcloud compute url-maps add-path-matcher test --path-matcher-name=${{env.reponame}}-dev --default-service=https://www.googleapis.com/compute/v1/projects/labs-370214/global/backendServices/${{ env.reponame }}-dev
-         gcloud compute url-maps add-host-rule test --hosts="${{env.reponame}}-dev.gallit.net" --path-matcher-name=${{env.reponame}}-dev
+#       - name: Checkout Pipeline repository
+#         uses: actions/checkout@v3
+#         with:
+#           repository: wgall/cloudrun_laravel_cicd
+#           token: ${{ secrets.CLOUDRUN_GIT_TOKEN }}
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           terraform_version: 1.3.5
+#           terraform_wrapper: false
+#       - name: Authenitcate pipeline repository 
+#         uses: 'google-github-actions/auth@v1'
+#         with:
+#           credentials_json: ${{ secrets.SA_CREDENTIALS }}
+#       - name: Setup pipline repository
+#         uses: google-github-actions/setup-gcloud@main 
+#         with:
+#           project_id: labs-370214
+#           export_default_credentials: true 
+#       - name: Check if registry exists
+#         id: repository_status
+#         run: echo "exists=$(gcloud run services list | grep ${{ env.reponame }}-dev | wc -l)" >> $GITHUB_ENV
+#       - name: Create Backend folder
+#         if:  ${{ env.exists == '0' }}
+#         working-directory: ./bucket
+#         run: terraform init && terraform apply --auto-approve -var "project=${{ env.reponame }}-dev/"
+#       - name: Initialize terraform 
+#         working-directory: ./dev
+#         run: |
+#           sed -i "s/folder/${{ env.reponame}}-dev/" main.tf
+#           terraform init -force-copy
+#       - name: Apply terraform 
+#         working-directory: ./dev
+#         run: | 
+#          host=$(terraform apply --auto-approve -var "image=${{env.reponame}}" -var "tag=${{env.tag}}" -var "project=${{env.reponame}}-dev" | grep "backend-id =" | cut -d " " -f 3) 
+#          gcloud compute url-maps add-path-matcher test --path-matcher-name=${{env.reponame}}-dev --default-service=https://www.googleapis.com/compute/v1/projects/labs-370214/global/backendServices/${{ env.reponame }}-dev
+#          gcloud compute url-maps add-host-rule test --hosts="${{env.reponame}}-dev.gallit.net" --path-matcher-name=${{env.reponame}}-dev
          
 
       
