@@ -85,7 +85,7 @@ jobs:
 
       
   deploy_on_stage: 
-    if: ${GITHUB_REF#refs/*/} != 'dev' 
+    if: contains(github.ref, 'dev')
     runs-on: ubuntu-latest
     steps:
       - name: Make repo name variable compliant with K8 namespace rules
