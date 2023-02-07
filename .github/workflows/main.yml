@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test
-        echo: ${{ env.tag }}
+        run: echo ${{ env.tag }}
   deploy_on_dev:
     if: ${{ env.tag == 'dev' }}
     runs-on: ubuntu-latest
