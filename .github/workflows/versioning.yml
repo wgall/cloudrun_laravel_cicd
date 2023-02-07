@@ -36,4 +36,4 @@ jobs:
           version=$(echo ${{ env.tag }} | tr . -)
           terraform init 
           terraform apply --auto-approve -var "image=${{env.reponame}}" -var "tag=${{env.tag}}" -var "project=${{env.reponame}}-$version"
-           gcloud compute url-maps add-path-matcher test --path-matcher-name=${{env.reponame}}-$version --default-service=https://www.googleapis.com/compute/v1/projects/labs-370214/global/backendServices/${{ env.reponame }}-stage --new-hosts=--hosts="${{env.reponame}}-$version.gallit.net"
+           gcloud compute url-maps add-path-matcher test --path-matcher-name=${{env.reponame}}-$version --default-service=https://www.googleapis.com/compute/v1/projects/labs-370214/global/backendServices/${{ env.reponame }}-$version --new-hosts="${{env.reponame}}-$version.gallit.net"
