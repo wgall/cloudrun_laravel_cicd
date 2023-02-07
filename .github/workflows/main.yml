@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy_on_dev:
-    if: ${GITHUB_REF#refs/*/} == 'dev'
+    if: ${{ GITHUB_REF#refs/*/ == 'dev' }}
     runs-on: ubuntu-latest
     steps:
       - name: Make repo name variable compliant with K8 namespace rules
