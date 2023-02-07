@@ -58,7 +58,7 @@ jobs:
       - name: Create Backend folder
         if:  ${{ env.exists == '0' }}
         working-directory: ./bucket
-        run: terraform init && terraform apply -y -var "project=${{ env.reponame }}-stage/"
+        run: terraform init && terraform apply --auto-approve -var "project=${{ env.reponame }}-stage/"
       - name: Initialize terraform 
         working-directory: ./dev
         run: terraform init -var "project="${{ env.reponame }}-dev" -force-copy
