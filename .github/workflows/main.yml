@@ -61,7 +61,9 @@ jobs:
         run: terraform init && terraform apply --auto-approve -var "project=${{ env.reponame }}-dev/"
       - name: Initialize terraform 
         working-directory: ./dev
-        run: terraform init -var "project=${{ env.reponame }}-dev" -force-copy
+        run: |
+          sed -i "s/folder/${{ env.reponame}}-dev/" main.tf
+          terraform init -force-copy
       - name: Apply terraform 
         working-directory: ./dev
         run: | 
