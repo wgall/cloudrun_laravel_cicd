@@ -7,7 +7,7 @@ terraform {
   }
   backend "gcs" {
     bucket = "wgall-labs"
-    folder = "${var.project}"
+    prefix = "${var.project}"
   }
 }
 provider "google" {
