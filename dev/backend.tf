@@ -1,7 +1,7 @@
 resource "google_compute_backend_service" "default" {
   provider                        = google-beta
   name                            = "${var.project}"
-  project                         = local.project
+  project                         = "labs-370214"
   enable_cdn                      = true
   timeout_sec                     = 10
   connection_draining_timeout_sec = 10
