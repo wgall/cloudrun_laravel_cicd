@@ -61,7 +61,7 @@ jobs:
         run: terraform init && terraform apply --auto-approve -var "project=${{ env.reponame }}-stage/"
       - name: Initialize terraform 
         working-directory: ./dev
-        run: terraform init -var "project="${{ env.reponame }}-dev" -force-copy
+        run: terraform init -var "project=${{ env.reponame }}-dev" -force-copy
       - name: Apply terraform 
         working-directory: ./dev
         run: | 

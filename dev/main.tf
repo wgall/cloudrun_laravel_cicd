@@ -10,6 +10,10 @@ terraform {
     folder = "${var.project}"
   }
 }
+provider "google" {
+  project     = "labs-370214"
+  region      = "europe-central2"
+}
 variable "project" {
     type = string
     default = "project"
@@ -21,8 +25,4 @@ variable "image" {
 variable "tag" {
     type = string
     default = "tag"
-}
-provider "google" {
-  project     = "labs-370214"
-  region      = "europe-central2"
 }
