@@ -7,6 +7,8 @@ jobs:
   deploy_application:
    runs-on: ubuntu-latest
    steps:
+      - name: Make repo name variable compliant with K8 namespace rules
+        run: echo "reponame=$(echo ${{ github.event.repository.name }} | tr _ - )" >> $GITHUB_ENV
       - name: Checkout Pipeline repository
         uses: actions/checkout@v3
         with:
