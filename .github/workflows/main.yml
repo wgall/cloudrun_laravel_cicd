@@ -54,9 +54,9 @@ jobs:
           export_default_credentials: true 
       - name: Check if registry exists
         id: repository_status
-        run: gcloud run services list | grep ${{ env.reponame }}-dev | echo ::set-output name=exists::true || echo ::set-output name=exists::false
+        run: echo "exists=$(gcloud run services list | grep ${{ env.reponame }}-dev | wc -l)" >> $GITHUB_ENV
       - name: Create Backend folder
-        if: steps.repository_status.outputs.exists == 'false'
+        if:  ${{ env.exists == '0' }}
         working-directory: ./bucket
         run: terraform init && terraform apply -y -var "project=${{ env.reponame }}-stage/"
       - name: Initialize terraform 
