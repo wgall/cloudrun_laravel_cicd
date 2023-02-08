@@ -30,7 +30,7 @@ jobs:
           export_default_credentials: true 
       - name: Check if registry exists
         id: repository_status
-        run: echo "exists=$(gcloud run services list | grep ${{ env.reponame }} | wc -l)" >> $GITHUB_ENV
+        run: echo "exists=$(gcloud run services list | grep ${{ env.reponame }}-prod | wc -l)" >> $GITHUB_ENV
       - name: Create Backend folder
         if:  ${{ env.exists == '0' }}
         working-directory: ./bucket
@@ -38,7 +38,7 @@ jobs:
       - name: Initialize terraform 
         working-directory: ./production
         run: |
-          sed -i "s/folder/${{ env.reponame}}/" main.tf
+          sed -i "s/folder/${{ env.reponame}}-prod/" main.tf
           terraform init -force-copy
       - name: Apply terraform 
         working-directory: ./production
