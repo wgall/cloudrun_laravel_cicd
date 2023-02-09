@@ -1,4 +1,4 @@
-#Pipelines to deploy Laravel application on Google Cloud run 
+# Pipelines to deploy Laravel application on Google Cloud run 
 
 <p>Every push to dev branch fetches application build and deployment on GCP</p>
 
